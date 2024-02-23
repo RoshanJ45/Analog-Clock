@@ -1,0 +1,73 @@
+import java.awt.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.Timer;
+public class AnalogClock extends JFrame {
+ private JPanel clockPanel;
+ public AnalogClock() {
+  setTitle("Analog Clock");
+  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  setSize(300, 300);
+  setLocationRelativeTo(null);
+  setResizable(false);
+       clockPanel = new JPanel() {
+        public void paintComponent(Graphics g) {
+         super.paintComponent(g);
+         Calendar now = Calendar.getInstance();
+         int hour = now.get(Calendar.HOUR_OF_DAY);
+         int minute = now.get(Calendar.MINUTE);
+         int second = now.get(Calendar.SECOND);
+         drawClock(g, hour, minute, second);
+ }
+ };
+ clockPanel.setBackground(Color.WHITE);
+ add(clockPanel);
+  Timer timer = new Timer(1000, e -> clockPanel.repaint());
+ timer.start();
+ }
+private void drawClock(Graphics g, int hour, int minute, int second) {
+ int centerX = clockPanel.getWidth() / 2;
+ int centerY = clockPanel.getHeight() / 2;
+ int radius = Math.min(centerX, centerY) - 10;
+ System.out.println(radius);
+ g.setColor(Color.BLACK);
+ g.drawOval(centerX -radius , centerY -radius , 2* radius,2* radius
+ double hourAngle = (hour % 12 + minute / 60.0) * 30;
+ double minuteAngle = minute * 6;
+double secondAngle = second * 6;
+ 
+ drawHand(g, centerX, centerY, radius * 0.5, hourAngle);
+ drawHand(g, centerX, centerY, radius * 0.8, minuteAngle);
+ drawHand(g, centerX, centerY, radius * 0.9, secondAngle);
+ //12 Hour stick
+ drawHand(g, centerX, centerY -(radius-15), 15, 0);
+ drawDigit(g, centerX-6, centerY -(radius-27),"12",0);
+ //1 Hour stick
+ drawHand(g, (int) (centerX + 58.33), centerY-(radius-15) , 10, -150);
+ //3 hour stick
+ drawHand(g, centerX+(radius), centerY , 15, -90);
+ drawDigit(g, centerX+(radius)-25, centerY +3 ,"3",0);
+ //6 hour stick
+ drawHand(g, centerX, centerY +radius, 15, 0);
+ drawDigit(g, centerX-3, centerY +(radius-21),"6",0);
+ //9 hour stick
+ drawHand(g, centerX-(radius), centerY , 15, 90);
+ drawDigit(g, centerX-(radius)+20, centerY +3 ,"9",0);
+ 
+ }
+ private void drawHand(Graphics g, int cx, int cy, double len, double angle) {
+  angle = Math.toRadians(angle - 90);
+  int x2 = (int)(cx + len * Math.cos(angle));
+  int y2 = (int)(cy + len * Math.sin(angle));
+  g.drawLine(cx, cy, x2, y2);
+ }
+ private void drawDigit(Graphics g, int cx, int cy,String number,int offset) {
+    // angle = Math.toRadians(angle - 90);
+   // int x2 = (int)(cx + len * Math.cos(angle));
+  // int y2 = (int)(cy + len * Math.sin(angle));
+   g.drawBytes(number.getBytes(),offset,number.getBytes().length,cx,cy);
+ }
+ public static void main(String[] args) {
+  SwingUtilities.invokeLater(() -> new AnalogClock().setVisible(true));
+ }
+}
